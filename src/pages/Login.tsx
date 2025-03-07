@@ -1,11 +1,14 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
+import SignupForm from "@/components/SignupForm";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,10 +18,11 @@ const Login = () => {
   const navigate = useNavigate();
   
   // If user is already logged in, redirect to dashboard
-  if (user) {
-    navigate(user.isAdmin ? "/admin" : "/dashboard");
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      navigate(user.isAdmin ? "/admin" : "/dashboard");
+    }
+  }, [user, navigate]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,10 +34,8 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const success = await login(email, password);
-      if (success) {
-        // Navigate will happen automatically due to the auth state change
-      }
+      await login(email, password);
+      // Navigation will happen automatically due to the auth state change
     } finally {
       setIsLoading(false);
     }
@@ -45,71 +47,68 @@ const Login = () => {
       
       <div className="flex-1 flex items-center justify-center px-4 pt-20">
         <div className="w-full max-w-md animate-fade-in">
-          <Card className="border-none shadow-lg bg-white/90 backdrop-blur-sm">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
-              <CardDescription className="text-center">
-                Enter your credentials to access your account
-              </CardDescription>
-            </CardHeader>
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            </TabsList>
             
-            <form onSubmit={handleSubmit}>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label 
-                    htmlFor="email" 
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Email
-                  </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="form-input"
-                    required
-                  />
-                </div>
+            <TabsContent value="login">
+              <Card className="border-none shadow-lg bg-white/90 backdrop-blur-sm">
+                <CardHeader className="space-y-1">
+                  <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+                  <CardDescription className="text-center">
+                    Enter your credentials to access your account
+                  </CardDescription>
+                </CardHeader>
                 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label 
-                      htmlFor="password" 
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                <form onSubmit={handleSubmit}>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="form-input"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="password">Password</Label>
+                      </div>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="form-input"
+                        required
+                      />
+                    </div>
+                  </CardContent>
+                  
+                  <CardFooter>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-nutrition-600 hover:bg-nutrition-700"
+                      disabled={isLoading}
                     >
-                      Password
-                    </label>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="form-input"
-                    required
-                  />
-                </div>
-                
-                <div className="text-xs text-muted-foreground">
-                  <strong>Demo accounts:</strong><br />
-                  Admin: admin@nutritionnest.com / admin123<br />
-                  User: john@example.com / password123
-                </div>
-              </CardContent>
-              
-              <CardFooter>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-nutrition-600 hover:bg-nutrition-700"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing in..." : "Sign in"}
-                </Button>
-              </CardFooter>
-            </form>
-          </Card>
+                      {isLoading ? "Signing in..." : "Sign in"}
+                    </Button>
+                  </CardFooter>
+                </form>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="signup">
+              <SignupForm />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

@@ -20,13 +20,13 @@ import { AuthProvider, useAuth } from "./lib/auth";
 const queryClient = new QueryClient();
 
 // Protected Route Component
-const ProtectedRoute = ({ children, requireAdmin = false }) => {
+const ProtectedRoute = ({ children, requireAdmin = false }: { children: React.ReactNode, requireAdmin?: boolean }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse-slow">Loading...</div>
+        <div className="animate-pulse text-nutrition-600">Loading...</div>
       </div>
     );
   }
@@ -39,7 +39,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     return <Navigate to="/dashboard" replace />;
   }
   
-  return children;
+  return <>{children}</>;
 };
 
 const AppRoutes = () => {
