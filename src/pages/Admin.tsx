@@ -4,42 +4,13 @@ import { useAuth } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import CreateUserForm from "@/components/CreateUserForm";
 import UserCard from "@/components/UserCard";
+import PlanManagement from "@/components/PlanManagement";
+import UserPlanAssignment from "@/components/UserPlanAssignment";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, RefreshCw, UserPlus } from "lucide-react";
-
-// Mock users data - in a real app, this would come from an API
-const MOCK_USERS = [
-  {
-    id: "1",
-    name: "Admin User",
-    email: "admin@nutritionnest.com",
-    isAdmin: true
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    email: "john@example.com",
-    isAdmin: false,
-    planId: "plan1"
-  },
-  {
-    id: "3",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    isAdmin: false,
-    planId: "plan2"
-  },
-  {
-    id: "4",
-    name: "Sam Wilson",
-    email: "sam@example.com",
-    isAdmin: false,
-    planId: "plan3"
-  }
-];
 
 const Admin = () => {
   const { user } = useAuth();
@@ -55,6 +26,7 @@ const Admin = () => {
       try {
         // In a real app, this would be an API call
         await new Promise(resolve => setTimeout(resolve, 1000));
+        // Using the mock data for now
         setUsers(MOCK_USERS);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -121,6 +93,9 @@ const Admin = () => {
               <TabsTrigger value="plans" className="data-[state=active]:bg-white">
                 Nutrition Plans
               </TabsTrigger>
+              <TabsTrigger value="assignments" className="data-[state=active]:bg-white">
+                Plan Assignments
+              </TabsTrigger>
               <TabsTrigger value="analytics" className="data-[state=active]:bg-white">
                 Analytics
               </TabsTrigger>
@@ -186,7 +161,11 @@ const Admin = () => {
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {filteredUsers.length > 0 ? (
                         filteredUsers.map((user) => (
-                          <UserCard key={user.id} user={user} />
+                          <UserCard 
+                            key={user.id} 
+                            user={user} 
+                            onRefresh={handleRefresh}
+                          />
                         ))
                       ) : (
                         <div className="col-span-full py-8 text-center text-gray-500">
@@ -208,14 +187,13 @@ const Admin = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[300px] flex items-center justify-center">
-                    <p className="text-gray-500">
-                      Nutrition plan management features will be implemented here.
-                      This would include creating, editing, and assigning plans to users.
-                    </p>
-                  </div>
+                  <PlanManagement />
                 </CardContent>
               </Card>
+            </TabsContent>
+            
+            <TabsContent value="assignments" className="animate-fade-in">
+              <UserPlanAssignment />
             </TabsContent>
             
             <TabsContent value="analytics" className="animate-fade-in">
@@ -242,5 +220,36 @@ const Admin = () => {
     </div>
   );
 };
+
+// Mock users data - in a real app, this would come from an API
+const MOCK_USERS = [
+  {
+    id: "1",
+    name: "Admin User",
+    email: "admin@nutritionnest.com",
+    isAdmin: true
+  },
+  {
+    id: "2",
+    name: "John Doe",
+    email: "john@example.com",
+    isAdmin: false,
+    planId: "plan1"
+  },
+  {
+    id: "3",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    isAdmin: false,
+    planId: "plan2"
+  },
+  {
+    id: "4",
+    name: "Sam Wilson",
+    email: "sam@example.com",
+    isAdmin: false,
+    planId: "plan3"
+  }
+];
 
 export default Admin;
