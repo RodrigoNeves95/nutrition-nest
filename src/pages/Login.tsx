@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import SignupForm from "@/components/SignupForm";
+import { toast } from "@/components/ui/use-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +21,7 @@ const Login = () => {
   // If user is already logged in, redirect to dashboard
   useEffect(() => {
     if (user) {
+      console.log("User already logged in, redirecting to dashboard", user);
       navigate(user.isAdmin ? "/admin" : "/dashboard");
     }
   }, [user, navigate]);
@@ -28,14 +30,25 @@ const Login = () => {
     e.preventDefault();
     
     if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter both email and password",
+        variant: "destructive",
+      });
       return;
     }
     
     setIsLoading(true);
     
     try {
-      await login(email, password);
-      // Navigation will happen automatically due to the auth state change
+      const success = await login(email, password);
+      if (success) {
+        console.log("Login successful, waiting for redirect...");
+      } else {
+        console.log("Login failed but no error was thrown");
+      }
+    } catch (error) {
+      console.error("Exception during login:", error);
     } finally {
       setIsLoading(false);
     }
@@ -109,6 +122,16 @@ const Login = () => {
               <SignupForm />
             </TabsContent>
           </Tabs>
+          
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-600">
+              Need test users? Visit the{" "}
+              <Link to="/create-users" className="text-nutrition-600 hover:underline">
+                Create Users
+              </Link>{" "}
+              page to create admin and regular test accounts.
+            </p>
+          </div>
         </div>
       </div>
     </div>
