@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import Community from "./pages/Community";
+import CreateUsers from "./pages/CreateUsers";
 
 // Auth Context
 import { AuthProvider, useAuth } from "./lib/auth";
@@ -47,6 +48,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/create-users" element={<CreateUsers />} />
       <Route 
         path="/dashboard" 
         element={
